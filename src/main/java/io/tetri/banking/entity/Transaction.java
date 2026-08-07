@@ -20,8 +20,6 @@ import java.math.BigDecimal;
 @Table(name = "transactions")
 public class Transaction extends AbstractEntity {
 
-    // Nullable on purpose: a transfer that fails because the source or destination
-    // account does not exist still needs to be recorded (see README - failure logging).
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_account_id")
     private Account fromAccount;
@@ -40,8 +38,6 @@ public class Transaction extends AbstractEntity {
     @Column(length = 500)
     private String failureReason;
 
-    // Unique per key: guarantees a retried request with the same Idempotency-Key
-    // can never produce a second row / a second debit.
     @Column(name = "idempotency_key", nullable = false, unique = true)
     private String idempotencyKey;
 }

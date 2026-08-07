@@ -63,6 +63,15 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "A resource with the given unique fields already exists", request, List.of());
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, HttpServletRequest request) {
+        log.warn("Conflict on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request, List.of()
+        );
+    }
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex, HttpServletRequest request) {
         log.error("Unhandled exception on {} {}", request.getMethod(), request.getRequestURI(), ex);
