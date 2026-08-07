@@ -15,6 +15,7 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: validate
+    show-sql: true
 
   flyway:
     enabled: true
@@ -26,3 +27,8 @@ springdoc:
     operations-sorter: method
   api-docs:
     path: /v3/api-docs
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

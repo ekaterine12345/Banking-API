@@ -1,5 +1,6 @@
 package io.tetri.banking.service;
 
+import io.tetri.banking.dto.request.CreateAccountRequest;
 import io.tetri.banking.dto.response.AccountResponse;
 
 import java.util.List;
@@ -10,4 +11,6 @@ public interface AccountService {
     List<AccountResponse> listAccounts();
 
     AccountResponse getAccount(UUID id);
+
+    AccountResponse openAccount(CreateAccountRequest request);
 }

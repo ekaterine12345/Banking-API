@@ -1,10 +1,13 @@
 package io.tetri.banking.service.impl;
 
+import io.tetri.banking.dto.request.CreateAccountRequest;
 import io.tetri.banking.dto.response.AccountResponse;
 import io.tetri.banking.entity.Account;
+import io.tetri.banking.entity.User;
 import io.tetri.banking.exception.ResourceNotFoundException;
 import io.tetri.banking.mapper.AccountMapper;
 import io.tetri.banking.repository.AccountRepository;
+import io.tetri.banking.repository.UserRepository;
 import io.tetri.banking.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
+    private final UserRepository userRepository;
 
     @Override
     public List<AccountResponse> listAccounts() {
@@ -38,5 +42,44 @@ public class AccountServiceImpl implements AccountService {
                     return ResourceNotFoundException.account(id);
                 });
         return accountMapper.toResponse(account);
+    }
+
+    @Override
+    @Transactional
+    public AccountResponse openAccount(CreateAccountRequest request) {
+        User owner = userRepository.findById(request.ownerId())
+                .orElseThrow(() -> {
+                    log.warn("Account creation failed, no user with id={}", request.ownerId());
+                    return ResourceNotFoundException.user(request.ownerId());
+                });
+
+        String accountNumber = generateAccountNumber();
+
+        Account account = new Account();
+        account.setOwner(owner);
+        account.setAccountNumber(accountNumber);
+        account.setBalance(request.initialBalance());
+        account.setCurrency(request.currency());
+
+        Account saved = accountRepository.save(account);
+
+        log.info("Opened new account id={} accountNumber={} ownerId={}",
+                saved.getId(), saved.getAccountNumber(), owner.getId()
+        );
+
+        return accountMapper.toResponse(saved);
+    }
+
+    private String generateAccountNumber() {
+        String accountNumber;
+
+        do {
+            accountNumber = UUID.randomUUID().toString()
+                    .replace("-", "")
+                    .substring(0, 16)
+                    .toUpperCase();
+        } while (accountRepository.existsByAccountNumber(accountNumber));
+
+        return accountNumber;
     }
 }
