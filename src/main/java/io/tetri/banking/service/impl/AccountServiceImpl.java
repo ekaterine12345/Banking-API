@@ -4,6 +4,8 @@ import io.tetri.banking.dto.request.CreateAccountRequest;
 import io.tetri.banking.dto.response.AccountResponse;
 import io.tetri.banking.entity.Account;
 import io.tetri.banking.entity.User;
+import io.tetri.banking.enums.AccountStatus;
+import io.tetri.banking.exception.ConflictException;
 import io.tetri.banking.exception.ResourceNotFoundException;
 import io.tetri.banking.mapper.AccountMapper;
 import io.tetri.banking.repository.AccountRepository;
@@ -14,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,5 +85,25 @@ public class AccountServiceImpl implements AccountService {
         } while (accountRepository.existsByAccountNumber(accountNumber));
 
         return accountNumber;
+    }
+
+    @Override
+    @Transactional
+    public void closeAccount(UUID id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Account close failed, no account with id={}", id);
+                    return ResourceNotFoundException.account(id);
+                });
+
+        if (account.getBalance().compareTo(BigDecimal.ZERO) != 0) {
+            log.warn("Account close rejected, account id={} holds balance={}", id, account.getBalance());
+            throw new ConflictException("Account cannot be closed while it holds a non-zero balance");
+        }
+
+        account.setDeletedAt(Instant.now());
+        account.setStatus(AccountStatus.CLOSED);
+
+        log.info("Closed account id={}", id);
     }
 }

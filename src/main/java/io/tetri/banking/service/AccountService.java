@@ -13,4 +13,6 @@ public interface AccountService {
     AccountResponse getAccount(UUID id);
 
     AccountResponse openAccount(CreateAccountRequest request);
+
+    void closeAccount(UUID id);
 }
