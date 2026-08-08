@@ -1,6 +1,7 @@
 package io.tetri.banking.dto.response;
 
 import io.tetri.banking.enums.AccountStatus;
+import io.tetri.banking.enums.Currency;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -10,7 +11,7 @@ public record AccountResponse(
         UUID id,
         String accountNumber,
         BigDecimal balance,
-        String currency,
+        Currency currency,
         AccountStatus status,
         AccountOwnerResponse owner,
         Instant createdAt

@@ -1,8 +1,8 @@
 package io.tetri.banking.dto.request;
 
+import io.tetri.banking.enums.Currency;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -17,7 +17,6 @@ public record CreateAccountRequest(
         BigDecimal initialBalance,
 
         @NotNull(message = "currency is required")
-        @Pattern(regexp = "^[A-Z]{3}$", message = "currency must be a 3-letter ISO 4217 code, e.g. USD")
-        String currency  // supported currencies or one currency?  GEL, USD, EUR -> ONE accountID
+        Currency currency
 ) {
 }

@@ -1,6 +1,7 @@
 package io.tetri.banking.entity;
 
 import io.tetri.banking.enums.AccountStatus;
+import io.tetri.banking.enums.Currency;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,8 +34,9 @@ public class Account extends AbstractEntity {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 3)
-    private String currency;
+    private Currency currency;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

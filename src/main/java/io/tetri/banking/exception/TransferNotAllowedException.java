@@ -1,6 +1,7 @@
 package io.tetri.banking.exception;
 
 import io.tetri.banking.enums.AccountStatus;
+import io.tetri.banking.enums.Currency;
 
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class TransferNotAllowedException extends RuntimeException {
         return new TransferNotAllowedException("Account " + accountId + " is " + status + " and cannot take part in a transfer");
     }
 
-    public static TransferNotAllowedException currencyMismatch(String fromCurrency, String toCurrency) {
+    public static TransferNotAllowedException currencyMismatch(Currency fromCurrency, Currency toCurrency) {
         return new TransferNotAllowedException("Cannot transfer between accounts with different currencies: " + fromCurrency + " and " + toCurrency);
     }
 }

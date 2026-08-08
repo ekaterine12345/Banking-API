@@ -59,11 +59,7 @@ public class AccountServiceImpl implements AccountService {
 
         String accountNumber = generateAccountNumber();
 
-        Account account = new Account();
-        account.setOwner(owner);
-        account.setAccountNumber(accountNumber);
-        account.setBalance(request.initialBalance());
-        account.setCurrency(request.currency());
+        Account account = accountMapper.toAccount(owner, accountNumber, request);
 
         Account saved = accountRepository.save(account);
 
