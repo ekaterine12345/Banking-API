@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -71,6 +72,24 @@ public class GlobalExceptionHandler {
         );
     }
 
+
+    @ExceptionHandler(InvalidTransferException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTransfer(InvalidTransferException ex, HttpServletRequest request) {
+        log.warn("Invalid transfer on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(TransferNotAllowedException.class)
+    public ResponseEntity<ErrorResponse> handleTransferNotAllowed(TransferNotAllowedException ex, HttpServletRequest request) {
+        log.warn("Transfer not allowed on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return build(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<ErrorResponse> handleMissingHeader(MissingRequestHeaderException ex, HttpServletRequest request) {
+        log.warn("Missing header on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return build(HttpStatus.BAD_REQUEST, "Missing required header: " + ex.getHeaderName(), request, List.of());
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex, HttpServletRequest request) {
