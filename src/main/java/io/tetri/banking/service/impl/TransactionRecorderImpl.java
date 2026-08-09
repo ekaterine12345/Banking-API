@@ -25,14 +25,16 @@ public class TransactionRecorderImpl implements TransactionRecorder {
 
     @Override
     @Transactional
-    public void recordFailure(UUID fromAccountId, UUID toAccountId, BigDecimal amount, String idempotencyKey, String failureReason) {
+    public void recordFailure(UUID fromAccountId, UUID toAccountId, BigDecimal amount, String idempotencyKey,
+                               String failureReason, int failureStatus) {
         Account fromAccount = fromAccountId != null ? accountRepository.getReferenceById(fromAccountId) : null;
         Account toAccount = toAccountId != null ? accountRepository.getReferenceById(toAccountId) : null;
 
-        Transaction transaction = transactionMapper.toFailedTransaction(fromAccount, toAccount, amount, idempotencyKey, failureReason);
+        Transaction transaction = transactionMapper.toFailedTransaction(
+                fromAccount, toAccount, amount, idempotencyKey, failureReason, failureStatus);
 
         transactionRepository.save(transaction);
 
-        log.info("Recorded failed transfer idempotencyKey={} reason={}", idempotencyKey, failureReason);
+        log.info("Recorded failed transfer idempotencyKey={} status={} reason={}", idempotencyKey, failureStatus, failureReason);
     }
 }

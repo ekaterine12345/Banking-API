@@ -38,6 +38,9 @@ public class Transaction extends AbstractEntity {
     @Column(length = 500)
     private String failureReason;
 
+    @Column(name = "failure_status")
+    private Integer failureStatus;
+
     @Column(name = "idempotency_key", nullable = false, unique = true)
     private String idempotencyKey;
 }

@@ -28,5 +28,6 @@ public interface TransactionMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "status", constant = "FAILED")
-    Transaction toFailedTransaction(Account fromAccount, Account toAccount, BigDecimal amount, String idempotencyKey, String failureReason);
+    Transaction toFailedTransaction(Account fromAccount, Account toAccount, BigDecimal amount, String idempotencyKey,
+                                     String failureReason, Integer failureStatus);
 }

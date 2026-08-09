@@ -91,6 +91,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "Missing required header: " + ex.getHeaderName(), request, List.of());
     }
 
+    @ExceptionHandler(TransferReplayException.class)
+    public ResponseEntity<ErrorResponse> handleTransferReplay(TransferReplayException ex, HttpServletRequest request) {
+        log.warn("Replayed transfer outcome on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return build(ex.getStatus(), ex.getMessage(), request, List.of());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex, HttpServletRequest request) {
         log.error("Unhandled exception on {} {}", request.getMethod(), request.getRequestURI(), ex);
