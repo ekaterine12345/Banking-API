@@ -13,6 +13,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.List;
@@ -95,6 +96,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTransferReplay(TransferReplayException ex, HttpServletRequest request) {
         log.warn("Replayed transfer outcome on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
         return build(ex.getStatus(), ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatus(ResponseStatusException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+        String message = ex.getReason() != null ? ex.getReason() : status.getReasonPhrase();
+        log.warn("Rejected request on {} {}: {}", request.getMethod(), request.getRequestURI(), message);
+        return build(status, message, request, List.of());
     }
 
     @ExceptionHandler(Exception.class)
