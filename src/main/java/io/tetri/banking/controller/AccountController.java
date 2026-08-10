@@ -46,8 +46,8 @@ public class AccountController {
 
     @GetMapping("/{id}/transactions")
     public ResponseEntity<Page<TransactionResponse>> getTransactionHistory(@PathVariable UUID id,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to,
             @PageableDefault(size = 20) Pageable pageable) {
 
         Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());

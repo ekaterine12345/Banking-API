@@ -80,8 +80,7 @@ public class AccountServiceImpl implements AccountService {
         Account saved = accountRepository.save(account);
 
         log.info("Opened new account id={} accountNumber={} ownerId={}",
-                saved.getId(), saved.getAccountNumber(), owner.getId()
-        );
+                saved.getId(), saved.getAccountNumber(), owner.getId());
 
         return accountMapper.toResponse(saved);
     }
